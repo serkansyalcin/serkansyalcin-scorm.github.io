@@ -44,7 +44,18 @@ export default function CreatePage() {
     includeQuiz: false,
     numberOfQuestions: 5,
     difficultyLevel: 'beginner',
-    template: 'modern'
+    template: 'modern',
+    minScore: 0,
+    maxScore: 100,
+    passingScore: 70,
+    timeLimit: 0,
+    allowRetake: true,
+    maxAttempts: 3,
+    slideCount: 5,
+    includeAnimations: true,
+    includeAudio: false,
+    includeVideo: false,
+    includeInteractiveElements: true
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -393,9 +404,10 @@ export default function CreatePage() {
                     </div>
 
                     {formData.includeQuiz && (
-                      <div className="space-y-2">
-                        <Label htmlFor="numberOfQuestions" className="text-sm font-medium text-secondary-700">
-                          Soru Sayısı
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="numberOfQuestions" className="text-sm font-medium text-secondary-700">
+                            Soru Sayısı
                         </Label>
                         <Input
                           id="numberOfQuestions"
@@ -407,7 +419,167 @@ export default function CreatePage() {
                           className="input"
                         />
                       </div>
+
+                      {/* Puanlama Sistemi */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="minScore" className="text-sm font-medium text-secondary-700">
+                            Min Puan
+                          </Label>
+                          <Input
+                            id="minScore"
+                            type="number"
+                            min="0"
+                            value={formData.minScore}
+                            onChange={(e) => handleInputChange('minScore', parseInt(e.target.value))}
+                            className="input"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="maxScore" className="text-sm font-medium text-secondary-700">
+                            Max Puan
+                          </Label>
+                          <Input
+                            id="maxScore"
+                            type="number"
+                            min="1"
+                            value={formData.maxScore}
+                            onChange={(e) => handleInputChange('maxScore', parseInt(e.target.value))}
+                            className="input"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="passingScore" className="text-sm font-medium text-secondary-700">
+                            Geçme Puanı
+                          </Label>
+                          <Input
+                            id="passingScore"
+                            type="number"
+                            min="0"
+                            max={formData.maxScore}
+                            value={formData.passingScore}
+                            onChange={(e) => handleInputChange('passingScore', parseInt(e.target.value))}
+                            className="input"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Deneme Ayarları */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="maxAttempts" className="text-sm font-medium text-secondary-700">
+                            Max Deneme Sayısı
+                          </Label>
+                          <Input
+                            id="maxAttempts"
+                            type="number"
+                            min="1"
+                            max="10"
+                            value={formData.maxAttempts}
+                            onChange={(e) => handleInputChange('maxAttempts', parseInt(e.target.value))}
+                            className="input"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="timeLimit" className="text-sm font-medium text-secondary-700">
+                            Süre Limiti (dakika)
+                          </Label>
+                          <Input
+                            id="timeLimit"
+                            type="number"
+                            min="0"
+                            placeholder="0 = sınırsız"
+                            value={formData.timeLimit || ''}
+                            onChange={(e) => handleInputChange('timeLimit', parseInt(e.target.value) || 0)}
+                            className="input"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Tekrar Deneme */}
+                      <div className="flex items-center space-x-3 p-4 border border-secondary-200 rounded-xl bg-secondary-50">
+                        <Checkbox
+                          id="allowRetake"
+                          checked={formData.allowRetake}
+                          onCheckedChange={(checked) => handleInputChange('allowRetake', checked)}
+                          className="border-secondary-300"
+                        />
+                        <Label htmlFor="allowRetake" className="text-sm font-medium text-secondary-700">
+                          Tekrar denemeye izin ver
+                        </Label>
+                      </div>
+                    </div>
                     )}
+
+                    {/* İçerik Ayarları */}
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold text-secondary-900">İçerik Ayarları</h3>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="slideCount" className="text-sm font-medium text-secondary-700">
+                          Slayt Sayısı
+                        </Label>
+                        <Input
+                          id="slideCount"
+                          type="number"
+                          min="3"
+                          max="20"
+                          value={formData.slideCount}
+                          onChange={(e) => handleInputChange('slideCount', parseInt(e.target.value))}
+                          className="input"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-center space-x-3 p-4 border border-secondary-200 rounded-xl bg-secondary-50">
+                          <Checkbox
+                            id="includeAnimations"
+                            checked={formData.includeAnimations}
+                            onCheckedChange={(checked) => handleInputChange('includeAnimations', checked)}
+                            className="border-secondary-300"
+                          />
+                          <Label htmlFor="includeAnimations" className="text-sm font-medium text-secondary-700">
+                            Animasyonlar
+                          </Label>
+                        </div>
+
+                        <div className="flex items-center space-x-3 p-4 border border-secondary-200 rounded-xl bg-secondary-50">
+                          <Checkbox
+                            id="includeInteractiveElements"
+                            checked={formData.includeInteractiveElements}
+                            onCheckedChange={(checked) => handleInputChange('includeInteractiveElements', checked)}
+                            className="border-secondary-300"
+                          />
+                          <Label htmlFor="includeInteractiveElements" className="text-sm font-medium text-secondary-700">
+                            İnteraktif Öğeler
+                          </Label>
+                        </div>
+
+                        <div className="flex items-center space-x-3 p-4 border border-secondary-200 rounded-xl bg-secondary-50">
+                          <Checkbox
+                            id="includeAudio"
+                            checked={formData.includeAudio}
+                            onCheckedChange={(checked) => handleInputChange('includeAudio', checked)}
+                            className="border-secondary-300"
+                          />
+                          <Label htmlFor="includeAudio" className="text-sm font-medium text-secondary-700">
+                            Ses Desteği
+                          </Label>
+                        </div>
+
+                        <div className="flex items-center space-x-3 p-4 border border-secondary-200 rounded-xl bg-secondary-50">
+                          <Checkbox
+                            id="includeVideo"
+                            checked={formData.includeVideo}
+                            onCheckedChange={(checked) => handleInputChange('includeVideo', checked)}
+                            className="border-secondary-300"
+                          />
+                          <Label htmlFor="includeVideo" className="text-sm font-medium text-secondary-700">
+                            Video Desteği
+                          </Label>
+                        </div>
+                      </div>
+                    </div>
                   </div>
               </CardContent>
             </Card>

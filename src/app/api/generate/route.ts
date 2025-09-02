@@ -134,23 +134,44 @@ Ayrıca, ${data.numberOfQuestions} adet soru içeren bir quiz bölümü ekle. He
             break;
         }
 
-        // Asıl OpenAI isteği
+        // Profesyonel OpenAI prompt'u
         const prompt = `
-Başlık: ${data.title}
-Açıklama: ${data.description}
-Zorluk Seviyesi: ${difficulty}
-İçerik Türü: ${contentTypePrompt}
-${data.targetAudience ? `Hedef Kitle: ${data.targetAudience}` : ''}
+Sen profesyonel bir eğitim tasarımcısısın. Aşağıdaki bilgilere göre kapsamlı bir SCORM eğitim içeriği oluştur:
 
-Öğrenme Hedefleri:
+**EĞİTİM BİLGİLERİ:**
+- Başlık: ${data.title}
+- Açıklama: ${data.description || 'Detaylı eğitim içeriği'}
+- Zorluk Seviyesi: ${difficulty}
+- İçerik Türü: ${contentTypePrompt}
+- Hedef Kitle: ${data.targetAudience || 'Genel kitle'}
+- Min Puan: ${data.minScore || 0}
+- Max Puan: ${data.maxScore || 100}
+- Geçme Puanı: ${data.passingScore || 70}
+- Süre Limiti: ${data.timeLimit ? data.timeLimit + ' dakika' : 'Sınırsız'}
+
+**ÖĞRENME HEDEFLERİ:**
 ${learningObjectives}
 
-İstenen İçerik:
+**İSTENEN İÇERİK:**
 ${data.prompt}
-${quizPrompt}
 
-Lütfen bu bilgilere göre HTML formatında eğitimsel bir içerik oluştur. 
-İçerik, temel HTML ve CSS ile biçimlendirilmiş olmalı ve bölümleri, görselleri (sadece textual açıklamalarla) ve gerekirse interaktif unsurları içermelidir.
+**QUIZ GEREKSİNİMLERİ:**
+${data.includeQuiz ? `
+- ${data.numberOfQuestions} adet çoktan seçmeli soru oluştur
+- Her soru için 4 seçenek (A, B, C, D)
+- Doğru cevapları belirt
+- Sorular ${data.title} konusu ile ilgili olmalı
+- Zorluk seviyesi: ${difficulty}
+` : 'Quiz gerekmiyor'}
+
+**ÇIKTI FORMATI:**
+HTML formatında, şu bölümleri içeren profesyonel eğitim içeriği:
+1. Giriş ve öğrenme hedefleri
+2. Ana konular ve detaylı açıklamalar
+3. Pratik örnekler ve uygulamalar
+4. ${data.includeQuiz ? 'Quiz soruları ve cevapları' : 'Özet ve değerlendirme'}
+
+İçerik ${difficulty} seviyesinde, ${data.targetAudience || 'genel kitle'} için uygun olmalı.
 `;
 
         // OpenAI API'ye istek gönder
